@@ -1,0 +1,57 @@
+name: 'Setup CQtDeployer'
+description: 'Downloads, extracts, and installs CQtDeployer for Linux (x64/ARM) and Windows'
+
+branding:
+  icon: 'download'
+  color: 'orange'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download and Extract CQtDeployer Linux x64
+      if: runner.os == 'Linux' && runner.arch == 'X64'
+      uses: robinraju/release-downloader@v1
+      with:
+        repository: 'QuasarApp/CQtDeployer'
+        latest: true
+        fileName: '*_Linux_x86_64.zip'
+        extract: true
+        out-file-path: ${{ github.workspace }}/cqt
+
+    - name: Download and Extract CQtDeployer Linux ARM
+      # This step handles ARM64/aarch64 architecture runners
+      if: runner.os == 'Linux' && runner.arch == 'ARM64'
+      uses: robinraju/release-downloader@v1
+      with:
+        repository: 'QuasarApp/CQtDeployer'
+        latest: true
+        fileName: '*_Linux_ARM64.zip'
+        extract: true
+        out-file-path: ${{ github.workspace }}/cqt
+
+    - name: Install CQtDeployer Linux
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        chmod +x "${{ github.workspace }}/cqt/CQtDeployer.sh"
+        chmod +x "${{ github.workspace }}/cqt/bin/CQtDeployer"
+        ln -s ${{ github.workspace }}/cqt/CQtDeployer.sh ${{ github.workspace }}/cqt/cqtdeployer
+        echo "$GITHUB_WORKSPACE/cqt" >> $GITHUB_PATH
+
+    - name: Download and Extract CQtDeployer Windows
+      if: runner.os == 'Windows'
+      uses: robinraju/release-downloader@v1
+      with:
+        repository: 'QuasarApp/CQtDeployer'
+        latest: true
+        fileName: '*_Windows_AMD64.zip'
+        extract: true
+        out-file-path: ${{ github.workspace }}/cqt
+
+    - name: Install CQtDeployer Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        # Safely append to GITHUB_PATH in Windows using UTF-8 encoding
+        $cqtPath = "${{ github.workspace }}\cqt"
+        echo $cqtPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
