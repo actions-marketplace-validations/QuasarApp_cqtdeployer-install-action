@@ -11,7 +11,7 @@ Add the following step to your GitHub Actions workflow file (e.g., `.github/work
 
 ```yaml
 - name: Install CQtDeployer
-  uses: QuasarApp/setup-cqtdeployer@v1.0.0
+  uses: QuasarApp/cqtdeployer-install-action@v1.0.0
   
 ```
 
@@ -42,7 +42,7 @@ jobs:
 
       # 1. Install CQtDeployer using this custom action
       - name: Setup CQtDeployer
-        uses: твоё-имя-аккаунта/setup-cqtdeployer@v1.0.0
+        uses: твоё-имя-аккаунта/cqtdeployer-install-action@v1.0.0
 
       # 3. Run deployment for your Qt Application (Linux)
       - name: Deploy Application (Linux)
